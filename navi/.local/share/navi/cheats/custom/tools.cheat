@@ -1,3 +1,25 @@
+% editor, neovim
+
+# Open file at specific line (useful with Claude references like file.py:42)
+nvim +<line> <file>
+
+# Open file read-only
+nvim -R <file>
+
+# Open current directory
+nvim .
+
+; Inside neovim:
+; q           Quit
+; /pattern    Search
+; n/N         Next/prev match
+; Esc         Clear search highlight
+; j/k         Scroll
+; Ctrl+d/u    Page down/up
+; Space q     Quit all
+
+$ file: fd --type f --- --preview 'bat --color=always --style=numbers {}'
+
 % navigation, zoxide
 
 # Smart cd - jump to a frequently used directory

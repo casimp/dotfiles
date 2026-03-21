@@ -1,0 +1,17 @@
+# .tmux-layout - Per-project tmux window config
+# Place in project root. Sessionizer reads this when creating a session.
+# Format: window_name: command
+# Lines without a command just open a shell.
+
+# Example: frontend project
+# code:
+# claude: claude
+# dev: npm run dev
+# storybook: npm run storybook
+# term:
+
+# Example: CDK project
+# code:
+# claude: claude
+# synth: cdk watch
+# term:

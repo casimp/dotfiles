@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# dotfiles-setup-claude-hooks - Add notification hooks to Claude settings
+# Merges bell notification hooks into existing settings.json without
+# overwriting other config (like GSD hooks).
+
+set -euo pipefail
+
+SETTINGS="$HOME/.claude/settings.json"
+
+if [[ ! -f "$SETTINGS" ]]; then
+    echo '{}' > "$SETTINGS"
+fi
+
+# Check if notification hooks already exist
+if grep -q "printf.*\\\\\\\\a" "$SETTINGS" 2>/dev/null; then
+    echo "Notification hooks already configured"
+    exit 0
+fi
+
+# Use python to merge hooks (handles JSON properly)
+python3 -c "
+import json, sys
+
+with open('$SETTINGS') as f:
+    settings = json.load(f)
+
+hooks = settings.setdefault('hooks', {})
+
+bell_hook = [{'hooks': [{'type': 'command', 'command': \"printf '\\\\a' > /dev/tty\"}]}]
+
+# Add bell to Stop and PermissionRequest (append, don't replace)
+for event in ['Stop', 'PermissionRequest']:
+    existing = hooks.get(event, [])
+    # Don't add if already has a bell hook
+    if not any('printf' in str(h) and '\\\\a' in str(h) for h in existing):
+        existing.extend(bell_hook)
+    hooks[event] = existing
+
+settings['hooks'] = hooks
+
+with open('$SETTINGS', 'w') as f:
+    json.dump(settings, f, indent=2)
+"
+
+echo "Bell notification hooks added to $SETTINGS"

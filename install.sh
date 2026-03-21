@@ -162,6 +162,9 @@ if command -v claude &>/dev/null; then
     # Install Playwright browser deps for Linux
     npx -y playwright install-deps 2>/dev/null || true
 
+    # Add bell notification hooks (Claude rings when it needs you)
+    dotfiles-setup-claude-hooks 2>/dev/null && ok "notification hooks configured" || true
+
     # Install gstack skills
     if [ ! -d "$HOME/.claude/skills/gstack" ]; then
         info "Installing gstack skills..."

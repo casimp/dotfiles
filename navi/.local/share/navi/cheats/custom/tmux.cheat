@@ -76,6 +76,16 @@ $ session_name: tmux list-sessions -F '#S' --- --prevent-extra
 # Exit copy mode
 ; q
 
+% tmux, worktrees
+
+# Add a git worktree as a new tmux window (with layout)
+tmux-worktree <branch>
+
+# Remove a worktree and its window
+tmux-worktree -d <branch>
+
+$ branch: git branch --format='%(refname:short)' --- --prevent-extra
+
 % tmux, config
 
 # Reload tmux config
@@ -86,3 +96,8 @@ $ session_name: tmux list-sessions -F '#S' --- --prevent-extra
 
 # Update TPM plugins
 ; Ctrl+a U
+
+% tmux, notifications
+
+; Red dot appears on window name when Claude needs you
+; bell-action=other means only non-active windows show it

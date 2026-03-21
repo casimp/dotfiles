@@ -1,6 +1,7 @@
 # Core tools (apt installable)
 tmux
 stow
+neovim
 fzf
 bat
 fd-find

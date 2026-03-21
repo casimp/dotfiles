@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
-# tmux-sessionizer - ThePrimeagen-style fuzzy project switcher
+# tmux-sessionizer - Fuzzy project switcher with default layout
 #
 # Usage:
 #   tmux-sessionizer          # interactive fzf selection
 #   tmux-sessionizer ~/path   # jump directly to path
+#
+# Layout priority:
+#   1. Project's .tmux-layout file (if exists)
+#   2. Default layout: work (nvim|claude|term), servers, spare term
 
-# Directories to search for projects (add more as needed)
 SEARCH_DIRS=(
     ~/software
 )
@@ -26,12 +29,14 @@ tmux_running=$(pgrep tmux)
 # Not inside tmux and tmux is not running
 if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
     tmux new-session -s "$selected_name" -c "$selected"
+    _tmux_sessionizer_apply_layout "$selected_name" "$selected"
     exit 0
 fi
 
-# Session doesn't exist, create it (detached)
+# Session doesn't exist, create it with layout
 if ! tmux has-session -t="$selected_name" 2>/dev/null; then
     tmux new-session -ds "$selected_name" -c "$selected"
+    _tmux_sessionizer_apply_layout "$selected_name" "$selected"
 fi
 
 # Switch to the session
@@ -40,3 +45,69 @@ if [[ -z $TMUX ]]; then
 else
     tmux switch-client -t "$selected_name"
 fi
+
+# --- Layout functions ---
+
+_tmux_sessionizer_apply_layout() {
+    local session=$1
+    local dir=$2
+    local layout_file="$dir/.tmux-layout"
+
+    if [[ -f "$layout_file" ]]; then
+        _tmux_sessionizer_custom_layout "$session" "$dir" "$layout_file"
+    else
+        _tmux_sessionizer_default_layout "$session" "$dir"
+    fi
+}
+
+_tmux_sessionizer_default_layout() {
+    local session=$1
+    local dir=$2
+
+    # Window 1 "work": nvim (left 60%) | claude (right top) | terminal (right bottom)
+    tmux rename-window -t "$session:1" "work"
+    tmux send-keys -t "$session:work" "nvim ." C-m
+    tmux split-window -t "$session:work" -h -p 40 -c "$dir"
+    tmux send-keys -t "$session:work.2" "claude" C-m
+    tmux split-window -t "$session:work.2" -v -p 30 -c "$dir"
+
+    # Window 2 "term": spare shell
+    tmux new-window -t "$session" -n "term" -c "$dir"
+
+    # Go back to work window
+    tmux select-window -t "$session:work"
+    tmux select-pane -t "$session:work.1"
+}
+
+_tmux_sessionizer_custom_layout() {
+    local session=$1
+    local dir=$2
+    local layout_file=$3
+    local first_window=true
+
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        # Skip comments and empty lines
+        [[ "$line" =~ ^[[:space:]]*# ]] && continue
+        [[ -z "${line// }" ]] && continue
+
+        # Parse "window_name: command" format
+        local wname="${line%%:*}"
+        local wcmd="${line#*: }"
+        wname=$(echo "$wname" | xargs)  # trim whitespace
+        wcmd=$(echo "$wcmd" | xargs)
+
+        if $first_window; then
+            tmux rename-window -t "$session:1" "$wname"
+            first_window=false
+        else
+            tmux new-window -t "$session" -n "$wname" -c "$dir"
+        fi
+
+        if [[ -n "$wcmd" && "$wcmd" != "$wname" ]]; then
+            tmux send-keys -t "$session:$wname" "$wcmd" C-m
+        fi
+    done < "$layout_file"
+
+    # Select first window
+    tmux select-window -t "$session:1"
+}

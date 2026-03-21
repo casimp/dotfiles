@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# tmux-worktree - Add a git worktree as a new tmux window
+#
+# Usage:
+#   tmux-worktree feature-branch     # create worktree + window
+#   tmux-worktree -d feature-branch  # remove worktree + window
+#
+# Creates a worktree at ../reponame-branchname and opens it as a new
+# tmux window with the standard layout (nvim | claude | terminal).
+
+set -euo pipefail
+
+usage() {
+    echo "Usage: tmux-worktree [-d] <branch-name>"
+    echo "  -d  Remove worktree and close window"
+    exit 1
+}
+
+DELETE=false
+if [[ "${1:-}" == "-d" ]]; then
+    DELETE=true
+    shift
+fi
+
+[[ $# -lt 1 ]] && usage
+
+BRANCH="$1"
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+if [[ -z "$REPO_ROOT" ]]; then
+    echo "Error: not in a git repository"
+    exit 1
+fi
+
+REPO_NAME=$(basename "$REPO_ROOT")
+WORKTREE_DIR="$(dirname "$REPO_ROOT")/${REPO_NAME}-${BRANCH}"
+WINDOW_NAME="$BRANCH"
+
+if $DELETE; then
+    # Remove worktree and close window
+    tmux kill-window -t "$WINDOW_NAME" 2>/dev/null || true
+    git worktree remove "$WORKTREE_DIR" --force 2>/dev/null || true
+    echo "Removed worktree and window: $BRANCH"
+    exit 0
+fi
+
+# Create worktree if it doesn't exist
+if [[ ! -d "$WORKTREE_DIR" ]]; then
+    # Create branch if it doesn't exist
+    if git show-ref --verify --quiet "refs/heads/$BRANCH" 2>/dev/null; then
+        git worktree add "$WORKTREE_DIR" "$BRANCH"
+    else
+        git worktree add -b "$BRANCH" "$WORKTREE_DIR"
+    fi
+fi
+
+# Create tmux window with layout
+SESSION=$(tmux display-message -p '#S')
+tmux new-window -t "$SESSION" -n "$WINDOW_NAME" -c "$WORKTREE_DIR"
+tmux send-keys -t "$SESSION:$WINDOW_NAME" "nvim ." C-m
+tmux split-window -t "$SESSION:$WINDOW_NAME" -h -p 40 -c "$WORKTREE_DIR"
+tmux send-keys -t "$SESSION:$WINDOW_NAME.2" "claude" C-m
+tmux split-window -t "$SESSION:$WINDOW_NAME.2" -v -p 30 -c "$WORKTREE_DIR"
+tmux select-pane -t "$SESSION:$WINDOW_NAME.1"
+
+echo "Worktree ready: $WORKTREE_DIR"
