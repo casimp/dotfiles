@@ -1,0 +1,88 @@
+% tmux, sessions
+
+; Prefix = Ctrl+a
+
+# Fuzzy find project -> tmux session (sessionizer)
+; Ctrl+f
+
+# Detach from session
+; Ctrl+a d
+
+# List sessions interactively
+; Ctrl+a s
+
+# Rename current session
+; Ctrl+a $
+
+# Kill session by name
+tmux kill-session -t <session_name>
+
+$ session_name: tmux list-sessions -F '#S' --- --prevent-extra
+
+% tmux, windows
+
+# Create new window
+; Ctrl+a c
+
+# Rename current window
+; Ctrl+a ,
+
+# List windows interactively
+; Ctrl+a w
+
+# Next / previous window
+; Ctrl+a n / Ctrl+a p
+
+# Jump to window by number
+; Alt+1 through Alt+5
+
+# Close current window
+; Ctrl+a &
+
+% tmux, panes
+
+# Split vertical (side by side)
+; Ctrl+a |
+
+# Split horizontal (top and bottom)
+; Ctrl+a -
+
+# Navigate panes (vim-style)
+; Ctrl+a h/j/k/l
+
+# Resize panes
+; Ctrl+a Ctrl+h/j/k/l
+
+# Toggle pane zoom (fullscreen)
+; Ctrl+a z
+
+# Close current pane
+; Ctrl+a x
+
+# Show pane numbers (press number to jump)
+; Ctrl+a q
+
+% tmux, copy mode
+
+# Enter copy mode
+; Ctrl+a [
+
+# Start selection (in copy mode)
+; v
+
+# Copy selection (in copy mode)
+; y
+
+# Exit copy mode
+; q
+
+% tmux, config
+
+# Reload tmux config
+; Ctrl+a r
+
+# Install TPM plugins
+; Ctrl+a I (capital i)
+
+# Update TPM plugins
+; Ctrl+a U

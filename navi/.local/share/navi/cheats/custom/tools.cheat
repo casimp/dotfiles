@@ -1,0 +1,149 @@
+% navigation, zoxide
+
+# Smart cd - jump to a frequently used directory
+z <query>
+
+# Go back to previous directory
+z -
+
+# Interactive directory selection with fzf
+zi
+
+% search, fzf
+
+# Fuzzy search command history
+; Ctrl+r
+
+# Fuzzy find files and insert path
+; Ctrl+t
+
+# Fuzzy cd into subdirectory
+; Alt+c
+
+# Open fzf-selected file in editor
+${EDITOR:-vim} $(fzf)
+
+% search, fd, files
+
+# Find files matching a pattern
+fd <pattern>
+
+# Find files by extension
+fd -e <extension>
+
+# Find files including hidden
+fd -H <pattern>
+
+# Find only directories
+fd -t d <pattern>
+
+% search, ripgrep, content
+
+# Search file contents recursively
+rg "<pattern>"
+
+# Case insensitive search
+rg -i "<pattern>"
+
+# Search only specific file types
+rg -t <filetype> "<pattern>"
+
+# List only filenames with matches
+rg -l "<pattern>"
+
+# Search with context lines
+rg -C 3 "<pattern>"
+
+$ filetype: echo -e "py\njs\nts\ngo\nrust\njava\nhtml\ncss\njson\nyaml\ntoml\nmd" --- --prevent-extra
+
+% files, bat, viewing
+
+# View file with syntax highlighting
+bat <file>
+
+# View file with plain output (no pager)
+bat --paging=never --style=plain <file>
+
+# Force specific language for stdin
+bat -l <language>
+
+# Show git diff inline
+bat --diff <file>
+
+$ file: fd --type f --- --preview 'bat --color=always --style=numbers {}'
+$ language: echo -e "json\nyaml\npython\nbash\njavascript\ntypescript\nrust\ngo" --- --prevent-extra
+
+% files, eza, listing
+
+# List files with icons
+eza --icons
+
+# Long listing with git status
+eza -la --icons --git
+
+# Tree view
+eza --tree --icons
+
+# Tree with depth limit
+eza --tree --icons -L <depth>
+
+% git, lazygit
+
+# Open lazygit terminal UI
+lazygit
+
+; Inside lazygit:
+; Space     Stage/unstage file
+; c         Commit
+; p / P     Pull / Push
+; [ / ]     Switch tabs
+; ?         Show all keybindings
+
+% git, shortcuts
+
+# Git status
+git status
+
+# Git diff (staged changes)
+git diff --staged
+
+# Pretty log graph
+git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+
+# Undo last commit (keep changes)
+git reset HEAD~1 --mixed
+
+# Quick work-in-progress commit
+git add -A && git commit -m 'wip'
+
+% shell, direnv
+
+# Create a per-directory env file
+echo 'export <var_name>=<value>' > .envrc
+
+# Approve the .envrc
+direnv allow
+
+% shell, tldr
+
+# Show practical examples for a command
+tldr <command>
+
+% system, btop
+
+# Launch system monitor
+btop
+
+% dotfiles, management
+
+# Sync secrets from Bitwarden
+dotfiles-secrets-sync
+
+# cd to dotfiles repo
+cd ~/software/personal/dotfiles
+
+# Manually trigger dotfiles sync
+systemctl --user start dotfiles-sync.service
+
+# Check auto-sync timer status
+systemctl --user status dotfiles-sync.timer

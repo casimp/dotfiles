@@ -1,10 +1,8 @@
 # Secrets and machine-specific files
-*.local
 *.pem
 *.key
 *.secret
 .bash_local
-.gitconfig-personal
 
 # SSH private keys
 id_*
