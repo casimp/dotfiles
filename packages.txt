@@ -1,0 +1,15 @@
+# Core tools (apt installable)
+tmux
+stow
+fzf
+bat
+fd-find
+ripgrep
+btop
+tldr
+direnv
+curl
+wget
+unzip
+git
+build-essential

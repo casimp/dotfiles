@@ -1,0 +1,10 @@
+# ~/.bash_local - Machine-specific config and secrets
+# Copy this to ~/.bash_local and fill in your values
+# This file is NOT tracked in git
+#
+# To auto-populate from Bitwarden, run: dotfiles-secrets-sync
+
+# export GITHUB_TOKEN=""
+# export AWS_ACCESS_KEY_ID=""
+# export AWS_SECRET_ACCESS_KEY=""
+# export AWS_DEFAULT_REGION="eu-west-1"

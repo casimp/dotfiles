@@ -1,0 +1,19 @@
+# Secrets and machine-specific files
+*.local
+*.pem
+*.key
+*.secret
+.bash_local
+.gitconfig-personal
+
+# SSH private keys
+id_*
+!id_*.pub
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*~

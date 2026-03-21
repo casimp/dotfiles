@@ -1,0 +1,8 @@
+[Unit]
+Description=Sync dotfiles from remote and re-stow
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c 'git -C %h/software/personal/dotfiles pull --ff-only && cd %h/software/personal/dotfiles && for d in */; do stow -R "$d"; done'
+StandardOutput=append:%h/.local/share/dotfiles-sync.log
+StandardError=append:%h/.local/share/dotfiles-sync.log

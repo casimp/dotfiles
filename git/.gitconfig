@@ -1,0 +1,47 @@
+[user]
+	name = Chris Simpson
+	email = chris.simpson@perceptual-robotics.com
+
+[includeIf "gitdir:~/software/personal/"]
+	path = ~/.gitconfig-personal
+
+[init]
+	defaultBranch = main
+
+[pull]
+	rebase = true
+
+[push]
+	autoSetupRemote = true
+
+[fetch]
+	prune = true
+
+[core]
+	pager = delta
+	excludesFile = ~/.gitignore_global
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	side-by-side = true
+	line-numbers = true
+	syntax-theme = Dracula
+
+[merge]
+	conflictstyle = diff3
+
+[diff]
+	colorMoved = default
+
+[alias]
+	st = status
+	co = checkout
+	br = branch
+	ci = commit
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	undo = reset HEAD~1 --mixed
+	amend = commit --amend --no-edit
+	wip = !git add -A && git commit -m 'wip'
