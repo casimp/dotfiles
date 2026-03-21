@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# claude-dashboard - Persistent status view of all tmux sessions
+# Run in a small pane to monitor Claude across sessions.
+
+REFRESH=5
+
+while true; do
+    clear
+    printf "\033[1m CLAUDE STATUS\033[0m\n\n"
+
+    tmux list-sessions -F '#{session_name}' 2>/dev/null | while read -r session; do
+        # Check each pane in the session for claude
+        found_claude=false
+        tmux list-panes -t "$session" -F '#{pane_id}' 2>/dev/null | while read -r pane; do
+            pane_cmd=$(tmux display-message -t "$pane" -p '#{pane_current_command}')
+            if [[ "$pane_cmd" == "claude" || "$pane_cmd" == "node" ]]; then
+                found_claude=true
+                # Grab last 5 lines of pane content
+                content=$(tmux capture-pane -t "$pane" -p -S -5 2>/dev/null)
+
+                if echo "$content" | grep -qE '\[y/n\]|\[Y/n\]|Allow|Deny'; then
+                    printf " \033[33m◐\033[0m %-20s \033[33mwaiting for input\033[0m\n" "$session"
+                elif echo "$content" | grep -qE '^\$|^>|^❯'; then
+                    printf " \033[36m○\033[0m %-20s \033[36midle\033[0m\n" "$session"
+                else
+                    printf " \033[32m●\033[0m %-20s \033[32mactive\033[0m\n" "$session"
+                fi
+            fi
+        done
+
+        if ! $found_claude 2>/dev/null; then
+            printf " \033[90m-\033[0m %-20s \033[90mno claude\033[0m\n" "$session"
+        fi
+    done
+
+    sleep "$REFRESH"
+done
