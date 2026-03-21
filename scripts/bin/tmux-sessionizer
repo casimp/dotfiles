@@ -7,60 +7,27 @@
 #
 # Layout priority:
 #   1. Project's .tmux-layout file (if exists)
-#   2. Default layout: work (nvim|claude|term), servers, spare term
+#   2. Default layout: work (nvim|claude|term), spare term
 
 SEARCH_DIRS=(
     ~/software
 )
 
-if [[ $# -eq 1 ]]; then
-    selected=$1
-else
-    selected=$(find "${SEARCH_DIRS[@]}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | fzf)
-fi
-
-if [[ -z $selected ]]; then
-    exit 0
-fi
-
-selected_name=$(basename "$selected" | tr . _)
-tmux_running=$(pgrep tmux)
-
-# Not inside tmux and tmux is not running
-if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
-    tmux new-session -s "$selected_name" -c "$selected"
-    _tmux_sessionizer_apply_layout "$selected_name" "$selected"
-    exit 0
-fi
-
-# Session doesn't exist, create it with layout
-if ! tmux has-session -t="$selected_name" 2>/dev/null; then
-    tmux new-session -ds "$selected_name" -c "$selected"
-    _tmux_sessionizer_apply_layout "$selected_name" "$selected"
-fi
-
-# Switch to the session
-if [[ -z $TMUX ]]; then
-    tmux attach-session -t "$selected_name"
-else
-    tmux switch-client -t "$selected_name"
-fi
-
 # --- Layout functions ---
 
-_tmux_sessionizer_apply_layout() {
+apply_layout() {
     local session=$1
     local dir=$2
     local layout_file="$dir/.tmux-layout"
 
     if [[ -f "$layout_file" ]]; then
-        _tmux_sessionizer_custom_layout "$session" "$dir" "$layout_file"
+        custom_layout "$session" "$dir" "$layout_file"
     else
-        _tmux_sessionizer_default_layout "$session" "$dir"
+        default_layout "$session" "$dir"
     fi
 }
 
-_tmux_sessionizer_default_layout() {
+default_layout() {
     local session=$1
     local dir=$2
 
@@ -79,21 +46,19 @@ _tmux_sessionizer_default_layout() {
     tmux select-pane -t "$session:work.1"
 }
 
-_tmux_sessionizer_custom_layout() {
+custom_layout() {
     local session=$1
     local dir=$2
     local layout_file=$3
     local first_window=true
 
     while IFS= read -r line || [[ -n "$line" ]]; do
-        # Skip comments and empty lines
         [[ "$line" =~ ^[[:space:]]*# ]] && continue
         [[ -z "${line// }" ]] && continue
 
-        # Parse "window_name: command" format
         local wname="${line%%:*}"
         local wcmd="${line#*: }"
-        wname=$(echo "$wname" | xargs)  # trim whitespace
+        wname=$(echo "$wname" | xargs)
         wcmd=$(echo "$wcmd" | xargs)
 
         if $first_window; then
@@ -108,6 +73,37 @@ _tmux_sessionizer_custom_layout() {
         fi
     done < "$layout_file"
 
-    # Select first window
     tmux select-window -t "$session:1"
 }
+
+# --- Main ---
+
+if [[ $# -eq 1 ]]; then
+    selected=$1
+else
+    selected=$(find "${SEARCH_DIRS[@]}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | fzf)
+fi
+
+if [[ -z $selected ]]; then
+    exit 0
+fi
+
+selected_name=$(basename "$selected" | tr . _)
+tmux_running=$(pgrep tmux)
+
+if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
+    tmux new-session -s "$selected_name" -c "$selected"
+    apply_layout "$selected_name" "$selected"
+    exit 0
+fi
+
+if ! tmux has-session -t="$selected_name" 2>/dev/null; then
+    tmux new-session -ds "$selected_name" -c "$selected"
+    apply_layout "$selected_name" "$selected"
+fi
+
+if [[ -z $TMUX ]]; then
+    tmux attach-session -t "$selected_name"
+else
+    tmux switch-client -t "$selected_name"
+fi

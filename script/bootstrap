@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+#
+# bootstrap - Set up a new machine from scratch.
+#
+# Usage:
+#   git clone <repo> ~/software/personal/dotfiles
+#   cd ~/software/personal/dotfiles
+#   script/bootstrap
+
+cd "$(dirname "$0")/.."
+DOTFILES_DIR=$(pwd -P)
+export DOTFILES_DIR
+
+info()  { printf "\r  [ \033[00;34m..\033[0m ] %s\n" "$1"; }
+ok()    { printf "\r  [ \033[00;32mOK\033[0m ] %s\n" "$1"; }
+warn()  { printf "\r  [ \033[0;33m!!\033[0m ] %s\n" "$1"; }
+fail()  { printf "\r  [\033[0;31mFAIL\033[0m] %s\n" "$1"; }
+export -f info ok warn fail
+
+FAILURES=()
+
+# ---------------------------------------------------------------------------
+# 1. Directories (before anything else)
+# ---------------------------------------------------------------------------
+mkdir -p ~/bin ~/.local/bin ~/.local/share ~/.config
+mkdir -p ~/software/personal
+mkdir -p ~/.config/systemd/user
+
+# ---------------------------------------------------------------------------
+# 2. Run each topic's install.sh
+# ---------------------------------------------------------------------------
+# tools/ runs first (apt packages everything else depends on)
+if [ -f "$DOTFILES_DIR/tools/install.sh" ]; then
+    info "running tools/install.sh"
+    if bash "$DOTFILES_DIR/tools/install.sh"; then
+        ok "tools"
+    else
+        fail "tools"
+        FAILURES+=("tools")
+    fi
+fi
+
+# Then everything else
+for installer in $(find "$DOTFILES_DIR" -maxdepth 2 -name install.sh -not -path '*/script/*' -not -path '*/tools/*' | sort); do
+    topic="$(dirname "$installer" | sed "s|$DOTFILES_DIR/||")"
+    info "running $topic/install.sh"
+    if bash "$installer"; then
+        ok "$topic"
+    else
+        fail "$topic"
+        FAILURES+=("$topic")
+    fi
+done
+
+# ---------------------------------------------------------------------------
+# 3. Stow all packages
+# ---------------------------------------------------------------------------
+info "stowing packages"
+
+BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
+
+for dir in "$DOTFILES_DIR"/*/; do
+    [ -d "$dir" ] || continue
+    pkg=$(basename "$dir")
+    [ "$pkg" = "script" ] && continue
+    [ "$pkg" = "tools" ] && continue
+
+    # Dry-run to find conflicts
+    conflicts=$(stow -n -t "$HOME" --ignore='install\.sh' "$pkg" 2>&1 | grep "existing target" || true)
+    if [ -n "$conflicts" ]; then
+        echo "$conflicts" | grep -oP 'existing target is not owned by stow: \K.*' | while read -r f; do
+            target="$HOME/$f"
+            if [ -e "$target" ] && [ ! -L "$target" ]; then
+                mkdir -p "$BACKUP_DIR/$(dirname "$f")"
+                mv "$target" "$BACKUP_DIR/$f"
+                warn "backed up $f"
+            elif [ -L "$target" ]; then
+                rm "$target"
+            fi
+        done
+    fi
+
+    stow_output=$(stow -R -t "$HOME" --ignore='install\.sh' "$pkg" 2>&1)
+    stow_exit=$?
+    if [ $stow_exit -eq 0 ]; then
+        ok "stowed $pkg"
+    else
+        echo "$stow_output" | grep -v "BUG" >&2
+        fail "stow $pkg"
+        FAILURES+=("stow:$pkg")
+    fi
+done
+
+[ -d "$BACKUP_DIR" ] && info "backups at $BACKUP_DIR"
+
+# ---------------------------------------------------------------------------
+# 4. Local config
+# ---------------------------------------------------------------------------
+if [ ! -f "$HOME/.bash_local" ]; then
+    cp "$DOTFILES_DIR/bash/.bash_local.example" "$HOME/.bash_local"
+    chmod 600 "$HOME/.bash_local"
+    ok "created ~/.bash_local"
+else
+    ok "~/.bash_local exists"
+fi
+
+# ---------------------------------------------------------------------------
+# 5. Summary
+# ---------------------------------------------------------------------------
+echo ""
+if [ ${#FAILURES[@]} -eq 0 ]; then
+    echo "  All installed!"
+else
+    echo "  Installed with errors:"
+    for f in "${FAILURES[@]}"; do
+        echo "    - $f"
+    done
+fi
+echo ""
+echo "  Next: source ~/.bashrc, then start tmux"
+echo "  In tmux: Ctrl+a I to install plugins"
+echo "  Run dotfiles-secrets-sync for Bitwarden secrets"
+echo ""
