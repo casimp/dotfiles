@@ -1,6 +1,5 @@
 tmux
 stow
-neovim
 fzf
 bat
 fd-find
@@ -13,3 +12,4 @@ wget
 unzip
 git
 build-essential
+neovim
