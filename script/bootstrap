@@ -68,7 +68,7 @@ for dir in "$DOTFILES_DIR"/*/; do
     # Dry-run to find conflicts
     conflicts=$(stow -n -t "$HOME" --ignore='install\.sh' "$pkg" 2>&1 | grep "existing target" || true)
     if [ -n "$conflicts" ]; then
-        echo "$conflicts" | grep -oP 'existing target is not owned by stow: \K.*' | while read -r f; do
+        echo "$conflicts" | grep -oP 'existing target is (?:not owned by stow|neither a link nor a directory): \K.*' | while read -r f; do
             target="$HOME/$f"
             if [ -e "$target" ] && [ ! -L "$target" ]; then
                 mkdir -p "$BACKUP_DIR/$(dirname "$f")"

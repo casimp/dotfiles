@@ -7,7 +7,7 @@ Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/). O
 ```bash
 git clone git@github.com:YOUR_USER/dotfiles.git ~/software/personal/dotfiles
 cd ~/software/personal/dotfiles
-./install.sh
+script/bootstrap
 ```
 
 That's it. The script installs all packages, symlinks all configs, enables auto-sync, and imports community cheat sheets.
