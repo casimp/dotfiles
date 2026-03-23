@@ -4,6 +4,15 @@
 sudo apt update -qq
 xargs sudo apt install -y -qq < "$DOTFILES_DIR/packages.txt"
 
+# Neovim (GitHub release — apt version is too old for LazyVim)
+if ! command -v nvim &>/dev/null || ! nvim --version | head -1 | grep -qP 'v0\.(1[0-9]|[2-9]\d)|v[1-9]'; then
+    curl -sLo /tmp/nvim.tar.gz "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
+    sudo rm -rf /opt/nvim
+    sudo tar xzf /tmp/nvim.tar.gz -C /opt
+    sudo mv /opt/nvim-linux-x86_64 /opt/nvim
+    sudo ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim
+    rm -f /tmp/nvim.tar.gz
+fi
 
 # eza
 if ! command -v eza &>/dev/null; then
@@ -23,6 +32,15 @@ if ! command -v lazygit &>/dev/null; then
     tar xf /tmp/lazygit.tar.gz -C /tmp lazygit
     sudo install /tmp/lazygit /usr/local/bin
     rm -f /tmp/lazygit /tmp/lazygit.tar.gz
+fi
+
+# Nerd Font (JetBrains Mono — needed for terminal/nvim icons)
+if ! fc-list | grep -qi "JetBrainsMono.*Nerd"; then
+    curl -sLo /tmp/nerd-font.zip "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip"
+    mkdir -p ~/.local/share/fonts
+    unzip -o /tmp/nerd-font.zip -d ~/.local/share/fonts/JetBrainsMono
+    fc-cache -f
+    rm -f /tmp/nerd-font.zip
 fi
 
 # bitwarden

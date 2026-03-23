@@ -5,7 +5,7 @@ if ! command -v navi &>/dev/null; then
     V=$(curl -s "https://api.github.com/repos/denisidoro/navi/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
     if [ -n "$V" ]; then
         curl -sLo /tmp/navi.tar.gz "https://github.com/denisidoro/navi/releases/download/v${V}/navi-v${V}-x86_64-unknown-linux-musl.tar.gz"
-        tar xf /tmp/navi.tar.gz -C "$HOME/.local/bin" navi
+        tar xf /tmp/navi.tar.gz -C "$HOME/.local/bin"
         rm -f /tmp/navi.tar.gz
     fi
 fi

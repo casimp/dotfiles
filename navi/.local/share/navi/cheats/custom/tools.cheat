@@ -9,14 +9,21 @@ nvim -R <file>
 # Open current directory
 nvim .
 
-; Inside neovim:
-; q           Quit
+; Inside neovim (LazyVim):
+; Space ff    Find files
+; Space sg    Grep project
+; Space e     File explorer
+; Space ,     Open buffers
+; gd          Go to definition
+; gr          Go to references
+; K           Hover docs
+; Space rn    Rename symbol
+; Space ca    Code action
+; Space q     Quit all
 ; /pattern    Search
 ; n/N         Next/prev match
 ; Esc         Clear search highlight
-; j/k         Scroll
 ; Ctrl+d/u    Page down/up
-; Space q     Quit all
 
 $ file: fd --type f --- --preview 'bat --color=always --style=numbers {}'
 

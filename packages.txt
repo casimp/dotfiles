@@ -12,4 +12,4 @@ wget
 unzip
 git
 build-essential
-neovim
+kitty
