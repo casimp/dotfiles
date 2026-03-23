@@ -95,6 +95,7 @@ require("lazy").setup({
   -- Treesitter: better syntax highlighting
   {
     "nvim-treesitter/nvim-treesitter",
+    tag = "v0.9.3",
     build = ":TSUpdate",
     config = function()
       require("nvim-treesitter.configs").setup({

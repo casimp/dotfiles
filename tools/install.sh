@@ -4,6 +4,7 @@
 sudo apt update -qq
 xargs sudo apt install -y -qq < "$DOTFILES_DIR/packages.txt"
 
+
 # eza
 if ! command -v eza &>/dev/null; then
     sudo mkdir -p /etc/apt/keyrings
