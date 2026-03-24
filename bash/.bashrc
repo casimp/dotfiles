@@ -74,6 +74,15 @@ elif command -v fdfind &>/dev/null; then
 fi
 
 # ---------------------------------------------------------------------------
+# Keyboard remaps
+# ---------------------------------------------------------------------------
+
+# Caps Lock → Ctrl (both positions act as Ctrl)
+if command -v setxkbmap &>/dev/null && [ -n "$DISPLAY" ]; then
+    setxkbmap -option ctrl:nocaps
+fi
+
+# ---------------------------------------------------------------------------
 # Keybindings
 # ---------------------------------------------------------------------------
 
