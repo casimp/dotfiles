@@ -25,14 +25,16 @@ ssh-keygen -t ed25519               # generate SSH key for this machine
 
 | Package | What it configures | Key files |
 |---|---|---|
-| `bash/` | Shell: history, aliases, tool init, PATH | `.bashrc`, `.bash_aliases`, `.bash_profile` |
+| `bash/` | Shell: history, aliases, tool init, PATH, keyboard remaps | `.bashrc`, `.bash_aliases`, `.bash_profile` |
 | `git/` | Git: delta pager, aliases, auto email switching | `.gitconfig`, `.gitconfig-personal`, `.gitignore_global` |
 | `tmux/` | Tmux: Ctrl+a prefix, vim nav, TPM plugins | `.tmux.conf` |
-| `scripts/` | CLI tools: sessionizer, secrets sync | `bin/tmux-sessionizer`, `bin/dotfiles-secrets-sync` |
+| `kitty/` | Kitty terminal: font, keybindings | `.config/kitty/kitty.conf` |
+| `nvim/` | Neovim: LazyVim config | `.config/nvim/` |
+| `scripts/` | CLI tools: sessionizer, secrets sync, claude helpers | `bin/tmux-sessionizer`, `bin/dotfiles-secrets-sync`, `bin/claude-dashboard` |
 | `navi/` | Interactive cheat sheets (tmux + tools) | `.config/navi/`, `.local/share/navi/cheats/custom/` |
 | `starship/` | Cross-shell prompt | `.config/starship.toml` |
 | `systemd/` | Auto-sync timer (pulls dotfiles every 30 min) | `.config/systemd/user/dotfiles-sync.*` |
-| `claude/` | Claude Code: global preferences, MCP rules | `.claude/CLAUDE.md` |
+| `claude/` | Claude Code: global preferences, MCP servers, keybindings | `.claude/CLAUDE.md`, `.claude/keybindings.json` |
 
 ### Installed CLI Tools
 
@@ -54,6 +56,18 @@ ssh-keygen -t ed25519               # generate SSH key for this machine
 
 ## Key Bindings
 
+### Keyboard Remaps (system-wide)
+
+| Remap | Effect |
+|---|---|
+| Caps Lock → Ctrl | Both Caps Lock and original Ctrl act as Ctrl |
+
+### Kitty Terminal
+
+| Binding | Action |
+|---|---|
+| `Alt+v` | Paste from clipboard |
+
 ### Tmux (prefix = Ctrl+a)
 
 | Binding | Action |
@@ -62,9 +76,10 @@ ssh-keygen -t ed25519               # generate SSH key for this machine
 | `Ctrl+a Ctrl+g` | Open navi cheat sheet popup |
 | `Ctrl+a \|` | Split pane vertical |
 | `Ctrl+a -` | Split pane horizontal |
-| `Ctrl+a h/j/k/l` | Navigate panes (vim-style) |
+| `Alt+h/j/k/l` | Navigate panes (no prefix needed) |
+| `Ctrl+a Ctrl+h/j/k/l` | Resize panes |
 | `Ctrl+a z` | Toggle pane zoom |
-| `Alt+1..5` | Jump to window |
+| `Alt+1..5` | Jump to window (no prefix needed) |
 | `Ctrl+a r` | Reload tmux config |
 | `Ctrl+a I` | Install TPM plugins |
 
@@ -77,11 +92,21 @@ ssh-keygen -t ed25519               # generate SSH key for this machine
 | `Ctrl+t` | Fuzzy find file path (fzf) |
 | `Alt+c` | Fuzzy cd into directory (fzf) |
 
+### Claude Code
+
+| Binding | Action |
+|---|---|
+| `Space` (hold) | Voice push-to-talk (in voice mode) |
+
 ## Claude Code Setup
 
 ### Global CLAUDE.md
 
 `claude/.claude/CLAUDE.md` contains personal preferences that apply to every project: coding style, communication preferences, tool usage rules. This is stowed to `~/.claude/CLAUDE.md`.
+
+### Keybindings
+
+`claude/.claude/keybindings.json` customises Claude Code keyboard shortcuts. Symlinked to `~/.claude/keybindings.json` by `claude/install.sh`.
 
 ### MCP Servers (installed globally by install.sh)
 
@@ -253,35 +278,52 @@ Auto-sync only pulls config changes. If you add new packages, re-run `install.sh
 
 ```
 dotfiles/
-├── install.sh              # Bootstrap script (idempotent)
-├── packages.txt            # apt packages
-├── .gitignore              # keeps secrets out of repo
-├── bash/                   # Shell config
+├── script/bootstrap           # Bootstrap script
+├── packages.txt               # apt packages
+├── .gitignore                 # keeps secrets out of repo
+├── bash/                      # Shell config
 │   ├── .bashrc
 │   ├── .bash_profile
 │   ├── .bash_aliases
-│   └── .bash_local.example # secret template
-├── git/                    # Git config
+│   └── .bash_local.example    # secret template
+├── git/                       # Git config
 │   ├── .gitconfig
 │   ├── .gitconfig-personal
 │   └── .gitignore_global
-├── tmux/                   # Tmux config
+├── tmux/                      # Tmux config
 │   └── .tmux.conf
-├── scripts/                # CLI scripts -> ~/bin
-│   └── bin/
-│       ├── tmux-sessionizer
-│       └── dotfiles-secrets-sync
-├── navi/                   # Cheat sheets
+├── kitty/                     # Kitty terminal config
+│   └── .config/kitty/kitty.conf
+├── nvim/                      # Neovim config (LazyVim)
+│   └── .config/nvim/
+│       ├── init.lua
+│       ├── lazyvim.json
+│       ├── lazy-lock.json
+│       └── lua/
+│           ├── config/
+│           └── plugins/
+├── scripts/                   # CLI scripts -> ~/bin
+│   ├── bin/
+│   │   ├── tmux-sessionizer
+│   │   ├── tmux-worktree
+│   │   ├── claude-dashboard
+│   │   ├── dotfiles-secrets-sync
+│   │   └── dotfiles-setup-claude-hooks
+│   └── share/
+│       └── tmux-layout.example
+├── navi/                      # Cheat sheets
 │   ├── .config/navi/config.yaml
 │   └── .local/share/navi/cheats/custom/
 │       ├── tmux.cheat
 │       └── tools.cheat
-├── starship/               # Prompt config
+├── starship/                  # Prompt config
 │   └── .config/starship.toml
-├── claude/                 # Claude Code config
+├── claude/                    # Claude Code config
+│   ├── install.sh             # MCP servers + keybindings symlink
 │   └── .claude/
-│       └── CLAUDE.md       # Global preferences
-└── systemd/                # Auto-sync timer
+│       ├── CLAUDE.md          # Global preferences
+│       └── keybindings.json   # Custom keybindings
+└── systemd/                   # Auto-sync timer
     └── .config/systemd/user/
         ├── dotfiles-sync.service
         └── dotfiles-sync.timer
