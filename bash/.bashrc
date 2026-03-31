@@ -78,8 +78,15 @@ fi
 # ---------------------------------------------------------------------------
 
 # Caps Lock → Ctrl (both positions act as Ctrl)
-if command -v setxkbmap &>/dev/null && [ -n "$DISPLAY" ]; then
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    gsettings set org.gnome.desktop.input-sources xkb-options "['ctrl:nocaps']"
+elif command -v setxkbmap &>/dev/null && [ -n "$DISPLAY" ]; then
     setxkbmap -option ctrl:nocaps
+fi
+
+# Disable Caps Lock LED
+if [ -w /sys/class/leds/input2::capslock/brightness ]; then
+    echo 0 > /sys/class/leds/input2::capslock/brightness
 fi
 
 # ---------------------------------------------------------------------------
