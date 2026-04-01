@@ -53,13 +53,17 @@ if [[ ! -d "$WORKTREE_DIR" ]]; then
     fi
 fi
 
-# Create tmux window with layout
+# Create tmux windows with layout
 SESSION=$(tmux display-message -p '#S')
+# Window 1: two claude instances side by side
 tmux new-window -t "$SESSION" -n "$WINDOW_NAME" -c "$WORKTREE_DIR"
-tmux send-keys -t "$SESSION:$WINDOW_NAME" "nvim ." C-m
-tmux split-window -t "$SESSION:$WINDOW_NAME" -h -p 40 -c "$WORKTREE_DIR"
+tmux send-keys -t "$SESSION:$WINDOW_NAME.1" "claude" C-m
+tmux split-window -t "$SESSION:$WINDOW_NAME" -h -p 50 -c "$WORKTREE_DIR"
 tmux send-keys -t "$SESSION:$WINDOW_NAME.2" "claude" C-m
-tmux split-window -t "$SESSION:$WINDOW_NAME.2" -v -p 30 -c "$WORKTREE_DIR"
 tmux select-pane -t "$SESSION:$WINDOW_NAME.1"
+# Window 2: nvim
+tmux new-window -t "$SESSION" -n "${WINDOW_NAME}-nvim" -c "$WORKTREE_DIR"
+tmux send-keys -t "$SESSION:${WINDOW_NAME}-nvim" "nvim ." C-m
+tmux select-window -t "$SESSION:$WINDOW_NAME"
 
 echo "Worktree ready: $WORKTREE_DIR"

@@ -18,12 +18,15 @@ fi
 selected_name=$(basename "$selected" | tr . _)
 
 if ! tmux has-session -t="$selected_name" 2>/dev/null; then
+    # Window 1: two claude instances side by side
     tmux new-session -ds "$selected_name" -c "$selected"
-    tmux send-keys -t "$selected_name:1.1" "nvim ." C-m
-    tmux split-window -t "$selected_name:1.1" -h -l 40% -c "$selected"
+    tmux send-keys -t "$selected_name:1.1" "claude" C-m
+    tmux split-window -t "$selected_name:1.1" -h -l 50% -c "$selected"
     tmux send-keys -t "$selected_name:1.2" "claude" C-m
-    tmux split-window -t "$selected_name:1.2" -v -l 30% -c "$selected"
     tmux select-pane -t "$selected_name:1.1"
+    # Window 2: nvim
+    tmux new-window -t "$selected_name" -c "$selected"
+    tmux send-keys -t "$selected_name:2.1" "nvim ." C-m
 fi
 
 if [[ -z $TMUX ]]; then

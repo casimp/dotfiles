@@ -43,5 +43,11 @@ if ! fc-list | grep -qi "JetBrainsMono.*Nerd"; then
     rm -f /tmp/nerd-font.zip
 fi
 
+# Rust toolchain (needed to compile tree-sitter-cli from source on Ubuntu 22.04)
+if ! command -v cargo &>/dev/null; then
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+    source "$HOME/.cargo/env"
+fi
+
 # bitwarden
 command -v bw &>/dev/null || sudo snap install bw
