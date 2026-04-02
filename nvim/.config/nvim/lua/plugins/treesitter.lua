@@ -1,7 +1,7 @@
 return {
   {
     "nvim-treesitter/nvim-treesitter",
-    pin = true,
+    pin = false,
     opts = {
       ensure_installed = {
         "bash",
@@ -22,7 +22,7 @@ return {
         "vimdoc",
         "yaml",
       },
-      auto_install = false,
+      auto_install = true,
     },
   },
 }
