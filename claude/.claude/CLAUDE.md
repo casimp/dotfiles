@@ -11,7 +11,7 @@
 - Keep code simple. Readability over cleverness.
 - Ask when unsure. Don't guess.
 - Challenge bad ideas.
-- Use MCP tools for GitLab, GitHub, DynamoDB, browser automation -- not CLI wrappers.
+- Use `glab` for GitLab, `gh` for GitHub.
 - Use Context7 to fetch current library docs before relying on training data.
 - Rebase, not merge. Concise commits describing why.
 
@@ -21,4 +21,4 @@
 - Summarise what you just did.
 - Add unnecessary comments, docstrings, or type annotations to unchanged code.
 - Amend commits unless asked.
-- Use `glab` or `gh` CLI when MCP tools are available.
+
