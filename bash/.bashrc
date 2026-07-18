@@ -61,6 +61,12 @@ if command -v direnv &>/dev/null; then
     eval "$(direnv hook bash)"
 fi
 
+# fnm (Node version manager)
+export PATH="$HOME/.local/share/fnm:$PATH"
+if command -v fnm &>/dev/null; then
+    eval "$(fnm env --use-on-cd)"
+fi
+
 # ---------------------------------------------------------------------------
 # fzf config
 # ---------------------------------------------------------------------------

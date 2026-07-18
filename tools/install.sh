@@ -43,10 +43,15 @@ if ! fc-list | grep -qi "JetBrainsMono.*Nerd"; then
     rm -f /tmp/nerd-font.zip
 fi
 
-# Rust toolchain (needed to compile tree-sitter-cli from source on Ubuntu 22.04)
-if ! command -v cargo &>/dev/null; then
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
-    source "$HOME/.cargo/env"
+# fnm (Node version manager) + latest Node LTS
+export PATH="$HOME/.local/share/fnm:$PATH"
+if ! command -v fnm &>/dev/null; then
+    curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell
+fi
+if command -v fnm &>/dev/null; then
+    eval "$(fnm env)"
+    fnm install --lts
+    fnm alias lts-latest default
 fi
 
 # bitwarden
