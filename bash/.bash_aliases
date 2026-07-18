@@ -24,11 +24,6 @@ elif command -v batcat &>/dev/null; then
     alias catp="batcat"
 fi
 
-# ripgrep -> grep
-if command -v rg &>/dev/null; then
-    alias grep="rg"
-fi
-
 # zoxide -> cd
 if command -v zoxide &>/dev/null; then
     alias cd="z"
