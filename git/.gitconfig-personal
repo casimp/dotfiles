@@ -1,3 +1,4 @@
 [user]
 	name = Chris Simpson
 	email = c.a.simpson01@gmail.com
+	signingkey = ~/.ssh/id_ed25519_github.pub

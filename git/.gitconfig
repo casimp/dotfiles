@@ -1,9 +1,22 @@
 [user]
 	name = Chris Simpson
 	email = chris.simpson@perceptual-robotics.com
+	signingkey = ~/.ssh/id_ed25519_gitlab.pub
 
 [includeIf "gitdir:~/software/personal/"]
 	path = ~/.gitconfig-personal
+
+[commit]
+	gpgsign = true
+
+[tag]
+	gpgsign = true
+
+[gpg]
+	format = ssh
+
+[gpg "ssh"]
+	allowedSignersFile = ~/.config/git/allowed_signers
 
 [init]
 	defaultBranch = main
