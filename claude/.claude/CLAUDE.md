@@ -12,7 +12,6 @@
 - Ask when unsure. Don't guess.
 - Challenge bad ideas.
 - Use `glab` for GitLab, `gh` for GitHub.
-- Use Context7 to fetch current library docs before relying on training data.
 - Rebase, not merge. Concise commits describing why.
 
 ## Don't
