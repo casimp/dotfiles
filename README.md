@@ -30,11 +30,10 @@ ssh-keygen -t ed25519               # generate SSH key for this machine
 | `tmux/` | Tmux: Ctrl+a prefix, vim nav, TPM plugins | `.tmux.conf` |
 | `kitty/` | Kitty terminal: font, keybindings | `.config/kitty/kitty.conf` |
 | `nvim/` | Neovim: LazyVim config | `.config/nvim/` |
-| `scripts/` | CLI tools: sessionizer, secrets sync, claude helpers | `bin/tmux-sessionizer`, `bin/dotfiles-secrets-sync`, `bin/claude-dashboard` |
+| `scripts/` | CLI tools: sessionizer, secrets sync | `bin/tmux-sessionizer`, `bin/dotfiles-secrets-sync` |
 | `navi/` | Interactive cheat sheets (tmux + tools) | `.config/navi/`, `.local/share/navi/cheats/custom/` |
 | `starship/` | Cross-shell prompt | `.config/starship.toml` |
 | `systemd/` | Auto-sync timer (pulls dotfiles every 30 min) | `.config/systemd/user/dotfiles-sync.*` |
-| `claude/` | Claude Code: global preferences, MCP servers, keybindings | `.claude/CLAUDE.md`, `.claude/keybindings.json` |
 
 ### Installed CLI Tools
 
@@ -91,40 +90,6 @@ ssh-keygen -t ed25519               # generate SSH key for this machine
 | `Ctrl+r` | Fuzzy search command history (fzf) |
 | `Ctrl+t` | Fuzzy find file path (fzf) |
 | `Alt+c` | Fuzzy cd into directory (fzf) |
-
-### Claude Code
-
-| Binding | Action |
-|---|---|
-| `Space` (hold) | Voice push-to-talk (in voice mode) |
-
-## Claude Code Setup
-
-### Global CLAUDE.md
-
-`claude/.claude/CLAUDE.md` contains personal preferences that apply to every project: coding style, communication preferences, tool usage rules. This is stowed to `~/.claude/CLAUDE.md`.
-
-### Keybindings
-
-`claude/.claude/keybindings.json` customises Claude Code keyboard shortcuts. Symlinked to `~/.claude/keybindings.json` by `claude/install.sh`.
-
-### MCP Servers (installed globally by install.sh)
-
-| Server | What it does |
-|---|---|
-| **GitLab** | MR management, issues, pipelines -- for work projects |
-| **GitHub** | PRs, issues, repos -- for personal projects |
-| **Context7** | Fetches up-to-date library docs (not stale training data) |
-| **Playwright** | Browser automation and web testing |
-| **DynamoDB** | Table queries, schema design, access pattern analysis |
-
-### Skills
-
-**gstack** is installed globally by `install.sh` -- provides `/review`, `/ship`, `/qa`, `/plan-ceo-review`, and more.
-
-To add your own global skills: create `~/.claude/skills/my-skill/SKILL.md`. To add project-level skills: create `.claude/skills/my-skill/SKILL.md` in the project repo.
-
----
 
 ## How It Works
 
@@ -233,27 +198,6 @@ Edit `bash/.bash_aliases`. It gets picked up on next shell start (or `source ~/.
 3. Add aliases to `bash/.bash_aliases` if needed
 4. Add a cheat sheet in `navi/.local/share/navi/cheats/custom/`
 
-### Add a Claude Code MCP server
-
-```bash
-claude mcp add --scope user my-server -- npx -y @some/mcp-server
-```
-
-Then add the same command to `install.sh` so new machines get it.
-
-### Add a Claude Code skill
-
-```bash
-mkdir -p ~/.claude/skills/my-skill
-# Write SKILL.md with frontmatter (name, description) and instructions
-```
-
-For global skills that should sync, add them under `claude/.claude/skills/` in the dotfiles repo.
-
-### Update global Claude preferences
-
-Edit `claude/.claude/CLAUDE.md` in the dotfiles repo. Changes sync to all machines via auto-sync.
-
 ## Updating Across Machines
 
 ### The normal workflow
@@ -306,9 +250,7 @@ dotfiles/
 │   ├── bin/
 │   │   ├── tmux-sessionizer
 │   │   ├── tmux-worktree
-│   │   ├── claude-dashboard
-│   │   ├── dotfiles-secrets-sync
-│   │   └── dotfiles-setup-claude-hooks
+│   │   └── dotfiles-secrets-sync
 │   └── share/
 │       └── tmux-layout.example
 ├── navi/                      # Cheat sheets
@@ -318,11 +260,6 @@ dotfiles/
 │       └── tools.cheat
 ├── starship/                  # Prompt config
 │   └── .config/starship.toml
-├── claude/                    # Claude Code config
-│   ├── install.sh             # MCP servers + keybindings symlink
-│   └── .claude/
-│       ├── CLAUDE.md          # Global preferences
-│       └── keybindings.json   # Custom keybindings
 └── systemd/                   # Auto-sync timer
     └── .config/systemd/user/
         ├── dotfiles-sync.service

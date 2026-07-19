@@ -16,4 +16,3 @@ Thumbs.db
 *.swp
 *~
 .claude/
-!claude/.claude/
