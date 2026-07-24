@@ -5,7 +5,7 @@ bat
 fd-find
 ripgrep
 btop
-tldr
+tealdeer
 direnv
 curl
 wget
