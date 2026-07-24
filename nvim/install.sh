@@ -14,9 +14,9 @@ if ! command -v tree-sitter &>/dev/null || ! tree-sitter --version 2>/dev/null |
     fi
 fi
 
-# Clear stale parsers and plugin cache, then sync.
-# LazyVim + enabled lang extras install parsers (treesitter) and LSP servers (Mason).
-rm -rf ~/.local/share/nvim/site/parser
-rm -rf ~/.local/share/nvim/lazy
-# CPATH: tree-sitter doesn't search Ubuntu's multiarch include path
-CPATH=/usr/include/x86_64-linux-gnu nvim --headless "+Lazy! sync" "+sleep 30" +qa
+# Plugins (lazy.nvim), treesitter parsers, and Mason LSP servers install themselves
+# the first time you launch `nvim` — that's how LazyVim bootstraps. We deliberately do
+# NOT run a headless "+Lazy! sync" here: this install.sh runs before the config is
+# stowed and it nuked lazy.nvim first, so the sync hit an empty config and failed with
+# "E492: Not an editor command: Lazy! sync". Just install the tree-sitter CLI above and
+# let nvim bootstrap on first open.
