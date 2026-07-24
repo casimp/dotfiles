@@ -72,6 +72,10 @@ for dir in "$DOTFILES_DIR"/*/; do
     while IFS= read -r src; do
         rel="${src#"$dir"}"                 # path under the package root == target under $HOME
         target="$HOME/$rel"
+        # Already stowed? If the target resolves (through a folded parent-dir symlink)
+        # to the package's own file, it's linked correctly — skip, or we'd "back up"
+        # (move) the package's file into the backup dir and empty the package.
+        [ "$(readlink -f "$target" 2>/dev/null)" = "$(readlink -f "$src")" ] && continue
         if [ -e "$target" ] && [ ! -L "$target" ]; then
             mkdir -p "$BACKUP_DIR/$(dirname "$rel")"
             mv "$target" "$BACKUP_DIR/$rel"
