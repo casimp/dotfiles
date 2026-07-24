@@ -63,3 +63,7 @@ alias cp="cp -i"
 # ---------------------------------------------------------------------------
 alias dotfiles="cd ~/software/personal/dotfiles"
 alias dotfiles-edit="cd ~/software/personal/dotfiles && \${EDITOR:-vim}"
+
+# Ubuntu packages fd-find / bat install as fdfind / batcat
+command -v fdfind &>/dev/null && ! command -v fd &>/dev/null && alias fd=fdfind
+command -v batcat &>/dev/null && ! command -v bat &>/dev/null && alias bat=batcat
