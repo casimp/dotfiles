@@ -65,20 +65,19 @@ for dir in "$DOTFILES_DIR"/*/; do
     [ "$pkg" = "script" ] && continue
     [ "$pkg" = "tools" ] && continue
 
-    # Dry-run to find conflicts
-    conflicts=$(stow -n -t "$HOME" --ignore='install\.sh' "$pkg" 2>&1 | grep "existing target" || true)
-    if [ -n "$conflicts" ]; then
-        echo "$conflicts" | grep -oP 'existing target is (?:not owned by stow|neither a link nor a directory): \K.*' | while read -r f; do
-            target="$HOME/$f"
-            if [ -e "$target" ] && [ ! -L "$target" ]; then
-                mkdir -p "$BACKUP_DIR/$(dirname "$f")"
-                mv "$target" "$BACKUP_DIR/$f"
-                warn "backed up $f"
-            elif [ -L "$target" ]; then
-                rm "$target"
-            fi
-        done
-    fi
+    # Back up any existing NON-symlink target this package would create, so stow won't
+    # abort. Enumerate the package's own files rather than parse stow's conflict wording
+    # (which varies by version — 2.4.1 says "over existing target X since ...", older
+    # versions "existing target is ...: X").
+    while IFS= read -r src; do
+        rel="${src#"$dir"}"                 # path under the package root == target under $HOME
+        target="$HOME/$rel"
+        if [ -e "$target" ] && [ ! -L "$target" ]; then
+            mkdir -p "$BACKUP_DIR/$(dirname "$rel")"
+            mv "$target" "$BACKUP_DIR/$rel"
+            warn "backed up $rel"
+        fi
+    done < <(find "$dir" -type f ! -name install.sh)
 
     stow_output=$(stow -R -t "$HOME" --ignore='install\.sh' "$pkg" 2>&1)
     stow_exit=$?
