@@ -99,6 +99,10 @@ fi
 # Keybindings
 # ---------------------------------------------------------------------------
 
+# Disable flow control so Ctrl+S/Ctrl+Q aren't swallowed (XOFF/XON) as keys.
+# Ubuntu enables ixon by default, which otherwise freezes the terminal on Ctrl+S.
+stty -ixon 2>/dev/null
+
 # Ctrl+F to launch tmux-sessionizer
 bind -x '"\C-f": tmux-sessionizer'
 

@@ -3,7 +3,7 @@
 ; Prefix = Ctrl+a
 
 # Fuzzy find project -> tmux session (sessionizer)
-; Ctrl+f
+; Ctrl+a f   (outside tmux: Ctrl+f)
 
 # Detach from session
 ; Ctrl+a d

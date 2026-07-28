@@ -71,7 +71,8 @@ ssh-keygen -t ed25519               # generate SSH key for this machine
 
 | Binding | Action |
 |---|---|
-| `Ctrl+f` | Fuzzy find project -> tmux session |
+| `Ctrl+a f` | Fuzzy find project -> tmux session (sessionizer) |
+| `Ctrl+a s` | List/switch sessions (choose-tree) |
 | `Ctrl+a Ctrl+g` | Open navi cheat sheet popup |
 | `Ctrl+a \|` | Split pane vertical |
 | `Ctrl+a -` | Split pane horizontal |
