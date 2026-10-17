@@ -1,0 +1,10 @@
+[Unit]
+Description=Block sleep for remote access
+
+[Service]
+ExecStart=/usr/bin/systemd-inhibit --what=sleep:idle --who=claude --why="remote access" --mode=block sleep infinity
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

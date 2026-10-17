@@ -1,0 +1,14 @@
+[Unit]
+Description=Claude remote-control (work) %i
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/home/casimp/.local/bin/claude remote-control --permission-mode auto --spawn worktree --remote-control-session-name-prefix %i
+Restart=always
+RestartSec=10
+LogRateLimitIntervalSec=60s
+LogRateLimitBurst=200
+
+[Install]
+WantedBy=default.target
