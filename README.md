@@ -34,6 +34,7 @@ ssh-keygen -t ed25519               # generate SSH key for this machine
 | `navi/` | Interactive cheat sheets (tmux + tools) | `.config/navi/`, `.local/share/navi/cheats/custom/` |
 | `starship/` | Cross-shell prompt | `.config/starship.toml` |
 | `systemd/` | Auto-sync timer (pulls dotfiles every 30 min) | `.config/systemd/user/dotfiles-sync.*` |
+| `handy/` | Handy dictation: Ctrl+Space shortcuts, wl-copy + ydotool paste | `.local/bin/handy-paste.sh`, `install.sh` |
 
 ### Installed CLI Tools
 
@@ -66,6 +67,24 @@ ssh-keygen -t ed25519               # generate SSH key for this machine
 | Binding | Action |
 |---|---|
 | `Alt+v` | Paste from clipboard |
+
+### Handy (dictation, GNOME shortcuts)
+
+| Binding | Action |
+|---|---|
+| `Ctrl+Space` | Start / stop dictation (toggle), text is pasted into the focused window |
+| `Ctrl+Escape` | Cancel the current recording |
+
+`handy/install.sh` installs Handy (latest GitHub `.deb`), `ydotool` and `wl-clipboard`, gives
+`/dev/uinput` to group `input` (udev rule + `uinput` module) and adds you to that group, enables
+Ubuntu's own `ydotool.service` user unit (don't add a second ydotoold - they share a socket and
+collide), adds the two GNOME shortcuts, and sets Handy to paste via `~/.local/bin/handy-paste.sh`,
+toggle mode, overlay and post-processing off, start at login.
+
+On a new machine: after bootstrap, **log out and back in** (for the `input` group), open Handy once
+and download the Parakeet 0.6B Q8 model, quit it, then re-run `handy/install.sh` to apply its
+settings. Handy's own Transcribe shortcut is also `ctrl+space`. Paste uses Ctrl+V, so it won't
+paste into terminals.
 
 ### Tmux (prefix = Ctrl+a)
 
