@@ -12,3 +12,4 @@ wget
 unzip
 git
 build-essential
+ghostty

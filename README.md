@@ -28,7 +28,7 @@ ssh-keygen -t ed25519               # generate SSH key for this machine
 | `bash/` | Shell: history, aliases, tool init, PATH, keyboard remaps | `.bashrc`, `.bash_aliases`, `.bash_profile` |
 | `git/` | Git: delta pager, aliases, auto email switching | `.gitconfig`, `.gitconfig-personal`, `.gitignore_global` |
 | `tmux/` | Tmux: Ctrl+a prefix, vim nav, TPM plugins | `.tmux.conf` |
-| `kitty/` | Kitty terminal: font, keybindings | `.config/kitty/kitty.conf` |
+| `ghostty/` | Ghostty terminal: font, keybindings | `.config/ghostty/config` |
 | `nvim/` | Neovim: LazyVim config | `.config/nvim/` |
 | `scripts/` | CLI tools: sessionizer, secrets sync | `bin/tmux-sessionizer`, `bin/dotfiles-secrets-sync` |
 | `navi/` | Interactive cheat sheets (tmux + tools) | `.config/navi/`, `.local/share/navi/cheats/custom/` |
@@ -61,7 +61,7 @@ ssh-keygen -t ed25519               # generate SSH key for this machine
 |---|---|
 | Caps Lock → Ctrl | Both Caps Lock and original Ctrl act as Ctrl |
 
-### Kitty Terminal
+### Ghostty Terminal
 
 | Binding | Action |
 |---|---|
@@ -237,8 +237,8 @@ dotfiles/
 │   └── .gitignore_global
 ├── tmux/                      # Tmux config
 │   └── .tmux.conf
-├── kitty/                     # Kitty terminal config
-│   └── .config/kitty/kitty.conf
+├── ghostty/                   # Ghostty terminal config
+│   └── .config/ghostty/config
 ├── nvim/                      # Neovim config (LazyVim)
 │   └── .config/nvim/
 │       ├── init.lua
